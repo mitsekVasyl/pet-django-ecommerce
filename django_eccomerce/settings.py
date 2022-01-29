@@ -26,7 +26,7 @@ SECRET_KEY = '8fl#ntrgjd=3#t$u0lnql#8kq1egwt$!99u%89l)1)bb3+e=0*'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'accounts.Account'
 
 # Application definition
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'category',
+    'accounts'
 ]
 
 MIDDLEWARE = [
