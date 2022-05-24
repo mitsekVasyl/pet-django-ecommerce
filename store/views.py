@@ -1,10 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
+from category.models import Category
 from store.models import Product
 
 
-def store(request):
-    products = Product.objects.all().filter(is_available=True)
+def store(request, category_slug=None):
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        products = Product.objects.all().filter(category=category)
+    else:
+        products = Product.objects.all().filter(is_available=True)
+
     products_count = products.count()
     context = {
         'products': products,
