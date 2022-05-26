@@ -39,6 +39,9 @@ def add_cart(request, product_id):
 
 
 def cart(request, total=0, quantity=0, cart_items=None):
+    tax = None
+    grand_total = None
+
     try:
         cart_obj = Cart.objects.get(cart_id=_cart_id(request))
         cart_items = CartItem.objects.filter(cart=cart_obj, is_active=True)
@@ -46,12 +49,17 @@ def cart(request, total=0, quantity=0, cart_items=None):
             total += (cart_item.product.price * cart_item.quantity)
             quantity += cart_item.quantity
 
+        tax = (2 * total) / 100
+        grand_total = total + tax
+
     except ObjectDoesNotExist:
         pass
 
     context = {
         'total': total,
         'quantity': quantity,
-        'cart_items': cart_items
+        'cart_items': cart_items,
+        'tax': tax,
+        'grand_total': grand_total,
     }
     return render(request, 'store/cart.html', context)
