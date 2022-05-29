@@ -10,9 +10,9 @@ PRODUCTS_COUNT_ON_STORE_PAGE = 3
 def store(request, category_slug=None):
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.all().filter(category=category)
+        products = Product.objects.all().filter(category=category).order_by('id')
     else:
-        products = Product.objects.all().filter(is_available=True)
+        products = Product.objects.all().filter(is_available=True).order_by('id')
 
     paginator = Paginator(products, PRODUCTS_COUNT_ON_STORE_PAGE)
     page = request.GET.get('page')
