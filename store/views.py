@@ -1,7 +1,10 @@
 from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator
 
 from category.models import Category
 from store.models import Product
+
+PRODUCTS_COUNT_ON_STORE_PAGE = 3
 
 
 def store(request, category_slug=None):
@@ -11,9 +14,13 @@ def store(request, category_slug=None):
     else:
         products = Product.objects.all().filter(is_available=True)
 
+    paginator = Paginator(products, PRODUCTS_COUNT_ON_STORE_PAGE)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
     products_count = products.count()
+
     context = {
-        'products': products,
+        'products': paged_products,
         'products_count': products_count,
     }
     return render(request, 'store/store.html', context)
