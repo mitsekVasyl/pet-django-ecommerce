@@ -33,3 +33,18 @@ def product_detail(request, category_slug, product_slug):
         "single_product": single_product
     }
     return render(request, 'store/product_detail.html', context)
+
+
+def search(request):
+    products = None
+    products_count = 0
+    keyword = request.GET.get('keyword')
+    if keyword:
+        products = Product.objects.filter(product_name__icontains=keyword)
+        products_count = products.count()
+
+    context = {
+        "products": products,
+        'products_count': products_count,
+    }
+    return render(request, 'store/store.html', context)
