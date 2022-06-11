@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from .forms import RegistrationForm
 from .models import Account
 
@@ -12,7 +13,7 @@ def register(request):
             email = form.cleaned_data['email']
             phone_number = form.cleaned_data['phone_humber']
             password = form.cleaned_data['password']
-            username = f"{first_name[0]}{last_name}".lower()
+            username = f"{first_name[0]}{last_name}".lower()  # TODO: add username to form
 
             user = Account.objects.create_user(
                 first_name=first_name,
@@ -24,6 +25,8 @@ def register(request):
 
             user.phone_humber = phone_number
             user.save()
+            messages.success(request, "Registration successful!")
+            return redirect('register')
 
     else:
         form = RegistrationForm()
