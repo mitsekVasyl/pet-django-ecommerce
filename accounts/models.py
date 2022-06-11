@@ -37,12 +37,12 @@ class Account(AbstractBaseUser):
     email = models.EmailField(max_length=100, blank=False, unique=True)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
-    phone_humber = models.CharField(max_length=20)  # TODO fix field name
+    phone_number = models.CharField(max_length=20)
 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)  # TODO: not active by default before email verification
+    is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superadmin = models.BooleanField(default=False)
 

@@ -1,6 +1,14 @@
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+from django_eccomerce.settings import EMAIL_HOST_USER
 from .forms import RegistrationForm
 from .models import Account
 
@@ -12,7 +20,7 @@ def register(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
-            phone_number = form.cleaned_data['phone_humber']
+            phone_number = form.cleaned_data['phone_number']
             password = form.cleaned_data['password']
             username = f"{first_name[0]}{last_name}".lower()  # TODO: add username to form
 
@@ -23,11 +31,23 @@ def register(request):
                 username=username,
                 password=password
             )
-
             user.phone_humber = phone_number
             user.save()
-            messages.success(request, "Registration successful!")
-            return redirect('register')
+
+            # User activation
+            current_site = get_current_site(request)
+            mail_subject = 'Please activate your account'
+            message = render_to_string('accounts/account_verification_email.html', {
+                'user': user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user)
+            })
+            send_email = EmailMessage(mail_subject, message, to=[email], from_email=EMAIL_HOST_USER)
+            send_email.send()
+            messages.success(request, "Thank you for registration. Please visit your mail box "
+                                      "and activate your account.")
+            return redirect('login')
 
     else:
         form = RegistrationForm()
@@ -36,6 +56,24 @@ def register(request):
         'form': form
     }
     return render(request, 'accounts/register.html', context)
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = Account.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, Account.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Your account is activated!")
+        return redirect('login')
+
+    else:
+        messages.success(request, "Invalid activation link.")
+        return redirect('register')
 
 
 def login(request):

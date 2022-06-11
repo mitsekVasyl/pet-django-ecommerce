@@ -137,3 +137,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+# SMTP CONFIGURATION
+EMAIL_HOST = 'smtp.mail.yahoo.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'vasyl.mitsek_test@yahoo.com'
+EMAIL_HOST_PASSWORD = 'yffajenzamjscgiw'  # yahoo app password
+EMAIL_USE_TLS = True
