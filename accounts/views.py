@@ -85,13 +85,18 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, "You are logged in now!")
-            return redirect('home')
+            return redirect('dashboard')
 
         else:
             messages.error(request, 'Invalid login credentials')
             return redirect('login')
 
     return render(request, 'accounts/login.html')
+
+
+@login_required(login_url='login')
+def dashboard(request):
+    return render(request, 'accounts/dashboard.html')
 
 
 @login_required(login_url='login')
