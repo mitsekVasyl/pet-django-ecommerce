@@ -8,6 +8,8 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from carts.models import Cart, CartItem
+from carts.views import _cart_id
 from django_eccomerce.settings import EMAIL_HOST_USER
 from .forms import RegistrationForm
 from .models import Account
@@ -83,6 +85,17 @@ def login(request):
 
         user = auth.authenticate(email=email, password=password)
         if user is not None:
+            try:
+                cart_obj = Cart.objects.get(cart_id=_cart_id(request))
+                is_cart_item_exist = CartItem.objects.filter(cart=cart_obj).exists()
+                if is_cart_item_exist:
+                    cart_items = CartItem.objects.filter(cart=cart_obj)
+                    for item in cart_items:
+                        item.user = user
+                        item.save()
+            except:
+                pass
+
             auth.login(request, user)
             messages.success(request, "You are logged in now!")
             return redirect('dashboard')
