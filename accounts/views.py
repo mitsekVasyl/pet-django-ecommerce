@@ -1,3 +1,4 @@
+import requests
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
@@ -124,7 +125,16 @@ def login(request):
 
             auth.login(request, user)
             messages.success(request, "You are logged in now!")
-            return redirect('dashboard')
+            url = request.META.get('HTTP_REFERER')
+            try:
+                query = requests.utils.urlparse(url).query
+                params = dict(p.split('=') for p in query.split('&'))
+                if 'next' in params:
+                    next_page = params['next']
+                    return redirect(next_page)
+
+            except:
+                return redirect('dashboard')
 
         else:
             messages.error(request, 'Invalid login credentials')
