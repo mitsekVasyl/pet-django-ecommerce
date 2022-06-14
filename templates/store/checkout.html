@@ -7,7 +7,7 @@
         <div class="container">
 
             <!-- ============================ COMPONENT 1 ================================= -->
-            <form action="" method="POST">
+            <form action="{% url 'place_order' %}" method="POST">
             {% csrf_token %}
                 <div class="row">
                     <aside class="col-lg-6">
@@ -32,7 +32,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="">Phone number</label>
-                                        <input type="text" name="phne_number" class="form-control" required>
+                                        <input type="text" name="phone_number" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -62,7 +62,7 @@
 
                                 <div class="form-group">
                                     <label for="">Comments</label>
-                                    <textarea name="comments" class="form-control" rows="2"></textarea>
+                                    <textarea name="order_note" class="form-control" rows="2"></textarea>
                                 </div>
 
                             </div> <!-- card.// -->
@@ -120,7 +120,7 @@
                                     </tbody>
                                 </table>
                                 <button
-                                    type="submit" name="button" class="btn btn-primary btn-block">Place order
+                                    type="submit" class="btn btn-primary btn-block">Place order
                                 </button>
                                 <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
 
