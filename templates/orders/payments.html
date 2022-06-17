@@ -102,7 +102,9 @@
                             <p class="text-center mb-3">
                                 <img src="{% static './images/misc/payments.png' %}" height="26">
                             </p>
-                            <a href="{% url 'checkout' %}" class="btn btn-primary btn-block"> Make payment </a>
+                            <div id="paypal-button-container">
+                                <!-- paypal button.// -->
+                            </div>
                         </div> <!-- card-body.// -->
                     </div> <!-- card.// -->
 
@@ -116,4 +118,80 @@
         </div> <!-- container .//  -->
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const amount = "{{ grand_total }}";
+        const orderId = "{{ order.order_number }}";
+        const paymentMethod = "paypal";
+        const url = "{% url 'payments' %}";
+        const csrftoken = getCookie('csrftoken');
+
+        function initPayPalButton() {
+            paypal.Buttons({
+                style: {
+                    shape: 'pill',
+                    color: 'blue',
+                    layout: 'vertical',
+                    label: 'paypal',
+                },
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{"amount": {"currency_code": "USD", "value": amount}}]
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (orderData) {
+
+                        // Full available details
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+
+                        function sendData() {
+                            fetch(url, {
+                                method: "POST",
+                                headers: {
+                                    "Content-type": "application/json",
+                                    "X-CSRFToken": csrftoken,
+                                },
+                                body: JSON.stringify({
+                                    order_id: orderId,
+                                    trans_id: orderData.id,
+                                    payment_method: paymentMethod,
+                                    status: orderData.status,
+
+                                })
+                            }).then().then()
+                        }
+                        sendData();
+                        // Show a success message within this page, e.g.
+                        const element = document.getElementById('paypal-button-container');
+                        element.innerHTML = '';
+                        element.innerHTML = '<h3 style="text-align:center">Payment submitted!</h3>';
+
+                        // Or go to another URL:  actions.redirect('thank_you.html');
+                    });
+                },
+
+                onError: function (err) {
+                    console.log(err);
+                }
+            }).render('#paypal-button-container');
+        }
+
+        initPayPalButton();
+    </script>
 {% endblock %}
