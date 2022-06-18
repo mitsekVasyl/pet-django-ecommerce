@@ -12,7 +12,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from carts.models import Cart, CartItem
 from carts.views import _cart_id
 from django_eccomerce.settings import EMAIL_HOST_USER
-from orders.models import Order
+from orders.models import Order, OrderProduct
 from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
 
@@ -218,6 +218,22 @@ def my_orders(request):
         'orders': orders
     }
     return render(request, 'accounts/my_orders.html', context)
+
+
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    order_products = OrderProduct.objects.filter(order__order_number=order_id)
+    order = Order.objects.get(order_number=order_id)
+    subtotal = 0
+    for item in order_products:
+        subtotal += item.product_price * item.quantity
+
+    context = {
+        'order_products': order_products,
+        'order': order,
+        'subtotal': subtotal,
+    }
+    return render(request, 'accounts/order_detail.html', context)
 
 
 @login_required(login_url='login')
