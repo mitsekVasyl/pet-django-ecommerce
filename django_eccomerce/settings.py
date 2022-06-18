@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+from decouple import config
 from pathlib import Path
 from django.contrib.messages import constants as messages
 
@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '8fl#ntrgjd=3#t$u0lnql#8kq1egwt$!99u%89l)1)bb3+e=0*'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'accounts.Account'
 
 # Application definition
@@ -140,8 +140,8 @@ MESSAGE_TAGS = {
 }
 
 # SMTP CONFIGURATION
-EMAIL_HOST = 'smtp.mail.yahoo.com'
+EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'vasyl.mitsek_test@yahoo.com'
-EMAIL_HOST_PASSWORD = 'yffajenzamjscgiw'  # yahoo app password
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # yahoo app password
 EMAIL_USE_TLS = True

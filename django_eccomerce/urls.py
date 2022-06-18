@@ -20,7 +20,7 @@ from django.urls import path, include
 from django_eccomerce import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('not_admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('store/', include('store.urls')),
     path('cart/', include('carts.urls')),
