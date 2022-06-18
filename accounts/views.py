@@ -159,7 +159,7 @@ def dashboard(request):
     return render(request, 'accounts/dashboard.html', context)
 
 
-@login_required
+@login_required(login_url='login')
 def edit_profile(request):
     current_user = request.user
     user_profile = get_object_or_404(UserProfile, user=current_user)
@@ -183,7 +183,35 @@ def edit_profile(request):
     return render(request, 'accounts/edit_profile.html', context)
 
 
-@login_required
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_new_password = request.POST['confirm_new_password']
+
+        user = Account.objects.get(id=request.user.id)
+
+        if new_password == confirm_new_password:
+            is_passwd_match = user.check_password(current_password)
+            if is_passwd_match:
+                user.set_password(new_password)
+                user.save()
+
+                messages.success(request, 'Password has been changed.')
+                auth.logout(request)
+                return redirect('login')
+
+            else:
+                messages.error(request, 'Please enter valid password')
+                return redirect('change_password')
+        else:
+            messages.error(request, "Passwords doesn't match")
+
+    return render(request, 'accounts/change_password.html')
+
+
+@login_required(login_url='login')
 def my_orders(request):
     orders = Order.objects.filter(user_id=request.user.id, is_ordered=True).order_by('-created_at')
     context = {
