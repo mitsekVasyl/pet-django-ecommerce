@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from category.models import Category
 from orders.models import OrderProduct
 from store.forms import ReviewForm
-from store.models import Product, ReviewRating
+from store.models import Product, ReviewRating, ProductGallery
 
 PRODUCTS_COUNT_ON_STORE_PAGE = 3
 
@@ -44,10 +44,14 @@ def product_detail(request, category_slug, product_slug):
     # get reviews
     reviews = ReviewRating.objects.filter(product_id=single_product.id, status=True)
 
+    # get product gallery
+    product_gallery = ProductGallery.objects.filter(product_id=single_product.id)
+
     context = {
         'single_product': single_product,
         'orderproduct': orderproduct,
         'reviews': reviews,
+        'product_gallery': product_gallery,
     }
     return render(request, 'store/product_detail.html', context)
 
