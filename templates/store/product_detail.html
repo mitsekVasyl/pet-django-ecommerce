@@ -21,16 +21,22 @@
             <form action="{% url 'add_cart' single_product.id %}" method="POST">
             {% csrf_token %}
                 <article class="content-body">
-
                 <h2 class="title">{{ single_product.product_name }}</h2>
-
+                <div class="rating-star">
+                    <span>
+                        <i class="fa fa-star{% if single_product.average_rating == 0.5 %}-half-o{% elif review.average_rating < 1.0 %}-o {% endif %}" aria-hidden="true"></i>
+                        <i class="fa fa-star{% if single_product.average_rating == 1.5 %}-half-o{% elif review.average_rating < 2.0 %}-o {% endif %}" aria-hidden="true"></i>
+                        <i class="fa fa-star{% if single_product.average_rating == 2.5 %}-half-o{% elif review.average_rating < 3.0 %}-o {% endif %}" aria-hidden="true"></i>
+                        <i class="fa fa-star{% if single_product.average_rating == 3.5 %}-half-o{% elif review.average_rating < 4.0 %}-o {% endif %}" aria-hidden="true"></i>
+                        <i class="fa fa-star{% if single_product.average_rating == 4.5 %}-half-o{% elif review.average_rating < 5.0 %}-o {% endif %}" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <p>Reviews: {{ single_product.reviews_count }}</p>
                 <div class="mb-3">
                     <var class="price h4">$ {{ single_product.price }}</var>
                 </div>
 
                 <p>{{ single_product.description }}</p>
-
-
                 <hr>
                     <div class="row">
                         <div class="item-option-select">
@@ -113,6 +119,16 @@
     {% if reviews %}
         <header class="section-heading">
             <h3>Customer Reviews </h3>
+            <div class="rating-star">
+                <span>
+                    <i class="fa fa-star{% if single_product.average_rating == 0.5 %}-half-o{% elif review.average_rating < 1.0 %}-o {% endif %}" aria-hidden="true"></i>
+                    <i class="fa fa-star{% if single_product.average_rating == 1.5 %}-half-o{% elif review.average_rating < 2.0 %}-o {% endif %}" aria-hidden="true"></i>
+                    <i class="fa fa-star{% if single_product.average_rating == 2.5 %}-half-o{% elif review.average_rating < 3.0 %}-o {% endif %}" aria-hidden="true"></i>
+                    <i class="fa fa-star{% if single_product.average_rating == 3.5 %}-half-o{% elif review.average_rating < 4.0 %}-o {% endif %}" aria-hidden="true"></i>
+                    <i class="fa fa-star{% if single_product.average_rating == 4.5 %}-half-o{% elif review.average_rating < 5.0 %}-o {% endif %}" aria-hidden="true"></i>
+                </span>
+            </div>
+            <p>Reviews: {{ single_product.reviews_count }}</p>
         </header>
         {% for review in reviews %}
         <article class="box mb-3">

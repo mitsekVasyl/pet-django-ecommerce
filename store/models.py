@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg, Count
 from django.urls import reverse
 
 from accounts.models import Account
@@ -22,6 +23,21 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+
+    def average_rating(self):
+        reviews = ReviewRating.objects.filter(product=self, status=True).aggregate(average=Avg('rating'))
+        avg = 0
+        if reviews['average'] is not None:
+            avg = round(float(reviews['average']) * 2) / 2  # round to the nearest .5; e.g 4.3 -> 4.5, 4.2 -> 4.0
+
+        return avg
+
+    def reviews_count(self):
+        reviews = ReviewRating.objects.filter(product=self, status=True).aggregate(count=Count('id'))
+        count = 0
+        if reviews['count'] is not None:
+            count = int(reviews['count'])
+        return count
 
 
 VARIATION_CATEGORY_CHOISE = (
