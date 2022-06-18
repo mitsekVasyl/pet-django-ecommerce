@@ -146,12 +146,21 @@ def login(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
+    orders = Order.objects.filter(user_id=request.user.id, is_ordered=True).order_by('-created_at')
     orders_count = orders.count()
     context = {
         'orders_count': orders_count
     }
     return render(request, 'accounts/dashboard.html', context)
+
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user_id=request.user.id, is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders
+    }
+    return render(request, 'accounts/my_orders.html', context)
 
 
 @login_required(login_url='login')
