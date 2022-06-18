@@ -33,9 +33,12 @@ def store(request, category_slug=None):
 def product_detail(request, category_slug, product_slug):
     single_product = Product.objects.get(slug=product_slug, category__slug=category_slug)
 
-    try:
-        orderproduct = OrderProduct.objects.filter(user=request.user, product_id=single_product).exists()
-    except OrderProduct.DoesNotExist:
+    if request.user.is_authenticated:
+        try:
+            orderproduct = OrderProduct.objects.filter(user=request.user, product_id=single_product).exists()
+        except OrderProduct.DoesNotExist:
+            orderproduct = None
+    else:
         orderproduct = None
 
     # get reviews
