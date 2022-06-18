@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 
 from category.models import Category
+from orders.models import OrderProduct
 from store.forms import ReviewForm
 from store.models import Product, ReviewRating
 
@@ -32,8 +33,14 @@ def store(request, category_slug=None):
 def product_detail(request, category_slug, product_slug):
     single_product = Product.objects.get(slug=product_slug, category__slug=category_slug)
 
+    try:
+        orderproduct = OrderProduct.objects.filter(user=request.user, product_id=single_product).exists()
+    except OrderProduct.DoesNotExist:
+        orderproduct = None
+
     context = {
-        "single_product": single_product
+        'single_product': single_product,
+        'orderproduct': orderproduct
     }
     return render(request, 'store/product_detail.html', context)
 
