@@ -12,33 +12,31 @@
                 <main class="col-md-9">
                     <article class="card">
                         <header class="card-header">
-                            <strong class="d-inline-block mr-3">Order history</strong>
+                            <strong class="d-inline-block mr-3">Edit profile</strong>
                         </header>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table class="table table-hover">
-                                      <thead>
-                                        <tr>
-                                          <th scope="col">Order number</th>
-                                          <th scope="col">Billing name</th>
-                                          <th scope="col">Phone number</th>
-                                          <th scope="col">Order total</th>
-                                          <th scope="col">Date</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                      {% for order in orders %}
-                                        <tr>
-                                          <th scope="row">{{ order.order_number }}</th>
-                                          <td>{{ order.full_name }}</td>
-                                          <td>{{ order.phone_number }}</td>
-                                          <td>{{ order.order_total }}</td>
-                                          <td>{{ order.created_at }}</td>
-                                        </tr>
-                                      {% endfor %}
-                                      </tbody>
-                                    </table>
+                                    <form action="{% url 'edit_profile' %}" method="POST" type="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                            {% for field in user_form %}
+                                            <div class="form-group col-md-6">
+                                                <label>{{ field.name }}</label>
+                                                <br>
+                                                {{ field }}
+                                            </div>
+                                            {% endfor %}
+                                            {% for field in profile_form %}
+                                            <div class="form-group col-md-6">
+                                                <label>{{ field.name }}</label>
+                                                <br>
+                                                {{ field }}
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-block">Save </button>
+                                    </form>
                                 </div>
                             </div>
                         </div> <!-- card-body .// -->

@@ -15,7 +15,7 @@ class AccountAdmin(UserAdmin):
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'city', 'state', 'county')
+    list_display = ('user', 'city', 'state', 'country')
 
 
 admin.site.register(Account, AccountAdmin)

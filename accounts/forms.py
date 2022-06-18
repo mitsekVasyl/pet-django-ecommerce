@@ -1,5 +1,5 @@
 from django import forms
-from .models import Account
+from .models import Account, UserProfile
 
 
 class RegistrationForm(forms.ModelForm):
@@ -22,3 +22,25 @@ class RegistrationForm(forms.ModelForm):
 
         if password != confirm_password:
             raise forms.ValidationError("Password doesn't match!")
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ('first_name', 'last_name', 'phone_number')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('address_line1', 'address_line2', 'city', 'state', 'country')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'

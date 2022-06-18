@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -13,8 +13,8 @@ from carts.models import Cart, CartItem
 from carts.views import _cart_id
 from django_eccomerce.settings import EMAIL_HOST_USER
 from orders.models import Order
-from .forms import RegistrationForm
-from .models import Account
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile
 
 
 def register(request):
@@ -152,6 +152,30 @@ def dashboard(request):
         'orders_count': orders_count
     }
     return render(request, 'accounts/dashboard.html', context)
+
+
+@login_required
+def edit_profile(request):
+    current_user = request.user
+    user_profile = get_object_or_404(UserProfile, user=current_user)
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=current_user)
+        profile_form = UserProfileForm(request.POST, instance=user_profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Profile has been updated.')
+            return redirect('dashboard')
+
+    else:
+        user_form = UserForm(instance=current_user)
+        profile_form = UserProfileForm(instance=user_profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+    return render(request, 'accounts/edit_profile.html', context)
 
 
 @login_required
