@@ -4,9 +4,9 @@ from orders.models import Payment, Order, OrderProduct
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['order_number', 'full_name', 'phone', 'email', 'city', 'order_tatal', 'tax', 'status', 'is_ordered']
+    list_display = ['order_number', 'full_name', 'phone_number', 'email', 'city', 'order_total', 'tax', 'status', 'is_ordered']
     list_filter = ['status', 'is_ordered']
-    search_fields = ['order_number', 'first_name', 'last_name', 'phone', 'email']
+    search_fields = ['order_number', 'first_name', 'last_name', 'phone_number', 'email']
     list_per_page = 20
 
 
