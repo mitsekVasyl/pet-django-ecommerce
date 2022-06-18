@@ -38,6 +38,11 @@ def register(request):
             user.phone_humber = phone_number
             user.save()
 
+            # Create user profile
+            profile = UserProfile()
+            profile.user_id = user.id
+            profile.save()
+
             # User activation
             current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
