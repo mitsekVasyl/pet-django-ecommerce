@@ -15,6 +15,8 @@ from pathlib import Path
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import django_eccomerce.media_storages
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 
@@ -27,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['greatkart-django.eba-ispisbgs.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['greatkart-django.eba-ispisbgs.us-west-2.elasticbeanstalk.com', '127.0.0.1']
 AUTH_USER_MODEL = 'accounts.Account'
 
 # Application definition
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'store',
     'carts',
     'orders',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -144,11 +147,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
-STATICFILES_DIRS = [
-    'django_eccomerce/static',
-]
+# STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / 'static'
+# STATICFILES_DIRS = [
+#     'django_eccomerce/static',
+# ]
+
+DEFAULT_FILE_STORAGE = 'django_eccomerce.media_storages.MediaStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -164,3 +169,22 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # yahoo app password
 EMAIL_USE_TLS = True
+
+# S3 config
+# TODO: do we need to collect static during deployment?
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_LOCATION = 'static'
+
+STATICFILES_DIRS = [
+    'django_eccomerce/static',
+]
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
