@@ -125,6 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 SESSION_EXPIRE_SECONDS = 3600  # 1 hour
 SESSION_EXPIRE_REDIRECT = 'accounts/login'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
